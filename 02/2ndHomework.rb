@@ -2,19 +2,7 @@ class Collection
   include Enumerable
 
   def Collection.parse(text)
-    unparsed_songs = []
-    text.each_line("\n\n").each do |unparsed_song|
-      unparsed_songs << unparsed_song.rstrip
-    end
-    Collection.parse_songs unparsed_songs
-  end
-
-  def Collection.parse_songs(unparsed_songs)
-    songs = []
-    unparsed_songs.each do |unparsed_song|
-      songs << Song.parse(unparsed_song)
-    end
-    Collection.new songs
+    Collection.new text.each_line("\n\n").map{ |line| Song.parse line.rstrip}
   end
 
   attr_accessor :artists, :albums, :names
@@ -44,12 +32,7 @@ class Song
   attr_accessor :name, :artist, :album
 
   def Song.parse(unparsed_song)
-    attributes = []
-    unparsed_song.each_line("\n").each do |attribute|
-      attributes << attribute.rstrip
-    end
-
-    Song.new attributes[0], attributes[1], attributes[2]
+    Song.new *(unparsed_song.each_line("\n").map{ |line| line.rstrip})
   end
 
   def initialize(name, artist, album)
